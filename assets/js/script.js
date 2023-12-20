@@ -18,10 +18,6 @@ function handleSubmit(event) {
     // TODO: actually get it (note: API responds "400: Bad Request" if passed an empty string)
     let city = "Beijing";
 
-    let lat;
-    let lon;
-    let weather;
-
     // Perform API calls
     fetch("http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + apiKey).then(jsonifyResponse)
     .then(getCoords)
@@ -43,7 +39,6 @@ function getCoords(data) {
         if (data.length > 0) {
             lat = data[0].lat;
             lon = data[0].lon;
-            console.log(lat, lon);
         } else {
             alert("no results found");
         }
@@ -66,51 +61,75 @@ function storeWeather(weather) {
 }
 
 
+// Display the weather to the page
 function displayWeather(weather) {
+    // Display the current weather conditions
+    document.querySelector("#current-city").textContent = weather.city.name;
+    document.querySelector("#current-date").textContent = dayjs.unix(weather.list[0].dt).format("MM/DD/YYYY");
+    document.querySelector("#current-icon").textContent = getIcon(weather.list[0].weather[0].main);
+    document.querySelector("#current-temp").textContent = weather.list[0].main.temp + "°F";
+    document.querySelector("#current-wind").textContent = weather.list[0].wind.speed + " mph";
+    document.querySelector("#current-humidity").textContent = weather.list[0].main.humidity + "%";
+
+    // Clear the 5-day forecast area of the page except for the heading
     forecastRowEl.innerHTML = "<div class='col-12'><h3>5-Day Forecast:</h3></div>";
 
-    // TODO: replace hardcoded values
-    document.querySelector("#current-city").textContent = "Atlanta";
-    document.querySelector("#current-date").textContent = "12/12/2023";
-    document.querySelector("#current-icon").textContent = "*";
-    document.querySelector("#current-temp").textContent = "53F";
-    document.querySelector("#current-wind").textContent = "8mph";
-    document.querySelector("#current-humidity").textContent = "71%";
+    // Get the index of the first forecast of the first day that is not the current day
+    // (Have to go with the first forecast of the day - it's the only one guaranteed to exist for each of the five days)
+    let firstDayIndex;
+    for (let i = 0; i < weather.list.length && !firstDayIndex; i++) {
+        if (dayjs.unix(weather.list[0].dt).day() !== dayjs.unix(weather.list[i].dt).day()) {
+            firstDayIndex = i
+        }
+    }
 
-
-    // TODO: replace hardcoded values
-    let icon = "*"
-    let temp = "53F";
-    let wind = "10mph";
-    let humidity = "53%";
-
-    for (let i = 0; i < 5; i++) {
+    // Add the first forecast of the day for each of the next five days to the page
+    for (let i = firstDayIndex; i < 40; i += 8) {
+        // Create the card
         let forecastCard = document.createElement("div");
         forecastCard.classList.add("col", "card", "me-3", "px-2");
 
+        // Create the card body
         let cardBody = document.createElement("div");
         cardBody.classList.add("card-body");
 
+        // Create the card title and text
         let cardHeading = document.createElement("h4");
         cardHeading.classList.add("card-title");
-        cardHeading.textContent = "12/12/2023";
+        cardHeading.textContent = dayjs.unix(weather.list[i].dt).format("MM/DD/YYYY");
         let cardIcon = document.createElement("p");
         cardIcon.classList.add("card-text");
-        cardIcon.textContent = icon;
+        cardIcon.textContent = getIcon(weather.list[i].weather[0].main);
         let cardTemp = document.createElement("p");
         cardTemp.classList.add("card-text");
-        cardTemp.textContent = "Temp: " + temp;
+        cardTemp.textContent = "Temp: " + weather.list[i].main.temp + "°F";
         let cardWind = document.createElement("p");
         cardWind.classList.add("card-text");
-        cardWind.textContent = "Wind: " + wind;
+        cardWind.textContent = "Wind: " + weather.list[i].wind.speed + " mph";
         let cardHumidity = document.createElement("p");
         cardHumidity.classList.add("card-text");
-        cardHumidity.textContent = "Humidity: " + humidity;
+        cardHumidity.textContent = "Humidity: " + weather.list[i].main.humidity + "%";
 
+        // Append everything together
         cardBody.append(cardHeading, cardIcon, cardTemp, cardWind, cardHumidity);
         forecastCard.appendChild(cardBody);
         forecastRowEl.appendChild(forecastCard);
     }
+}
 
-    console.log(weather);
+
+// Map from weather conditions to emoji icons
+function getIcon(weatherString) {
+    switch (weatherString) {
+        case "Clear":
+            return "☀️";
+        case "Clouds":
+            return "☁️";
+        case "Rain":
+            return "☔️";
+        case "Snow":
+            return "☃️";
+        default:
+            return "❓️";
+    }
 }
