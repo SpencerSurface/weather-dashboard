@@ -8,9 +8,13 @@ const HISTORY_LENGTH = 10;
 const formEl = document.querySelector("form");
 const inputEl = document.querySelector("#city-text-input");
 const forecastRowEl = document.querySelector("#forecast-row");
+const historyEl = document.querySelector("#history");
 
-// Initialize, set up event listeners
+// Set up event listeners
 formEl.addEventListener("submit", handleSubmit);
+
+// Display the search history to the page
+displayHistory();
 
 
 
@@ -44,8 +48,11 @@ function handleSubmit(event) {
     // Fetch weather for coordinates and display to the page
     fetchWeather(lat, lon);
 
-    // Update history
+    // Update history in storage
     updateHistory(city);
+
+    // Display history to the page
+    displayHistory();
 }
 
 
@@ -169,7 +176,7 @@ function getIcon(weatherString) {
 }
 
 
-// Update the search history on the page and in the storage
+// Update the search history in the storage
 function updateHistory(city) {
     let cityList = getCityList();
 
@@ -201,6 +208,23 @@ function getCityList() {
 }
 
 
+// Store the search history city list in localStorage
 function setCityList(cityList) {
     localStorage.setItem("cityList", JSON.stringify(cityList));
+}
+
+
+// Display the search history to the page in the form of a series of buttons
+function displayHistory() {
+    // Get the search history from storage
+    let cityList = getCityList();
+    // Clear the history area of the page
+    historyEl.innerHTML = "";
+    // Add a button to the history area for each city
+    for (let i = 0; i < cityList.length; i++) {
+        let historyButton = document.createElement("button");
+        historyButton.classList.add("btn", "btn-secondary", "mb-3", "w-100");
+        historyButton.textContent = cityList[i];
+        historyEl.append(historyButton);
+    }
 }
