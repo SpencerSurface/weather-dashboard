@@ -31,22 +31,8 @@ function handleSubmit(event) {
     }
 
     // Fetch coordinates for city and store to localStorage
-    fetchCoords(city);
-
-    // Get coordinates from storage
-    let coordPair = getCoords(city);
-    let lat;
-    let lon;
-    if (coordPair) {
-        lat = coordPair[0];
-        lon = coordPair[1];
-    } else {
-        alert("Coords for that city not stored.");
-        return;
-    }
-
-    // Fetch weather for coordinates and display to the page
-    fetchWeather(lat, lon);
+    fetchCoords(city)
+    .then(fetchWeather);
 
     // Update history in storage
     updateHistory(city);
@@ -57,10 +43,12 @@ function handleSubmit(event) {
 
 
 // Call the geocoding API to get the coordinates for the given city, then store
-function fetchCoords(city) {
-    fetch("http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + apiKey)
+async function fetchCoords(city) {
+    let coordPair = await fetch("http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + apiKey)
     .then(jsonifyResponse)
     .then(storeCoords)
+
+    return coordPair
 }
 
 
@@ -79,6 +67,7 @@ function storeCoords(data) {
     if (data) {
         if (data.length > 0) {
             localStorage.setItem(data[0].name, JSON.stringify([data[0].lat, data[0].lon]));
+            return [data[0].lat, data[0].lon]
         } else {
             alert("no results found");
         }
@@ -95,7 +84,9 @@ function getCoords(city) {
 
 
 // Call the 5-day forecast API to get weather data for the coordinates in question
-function fetchWeather(lat, lon) {
+function fetchWeather(coordPair) {
+    let lat = coordPair[0];
+    let lon = coordPair[1];
     fetch("http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&units=imperial")
     .then(jsonifyResponse)
     .then(displayWeather)
