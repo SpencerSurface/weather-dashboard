@@ -1,6 +1,9 @@
 // API key
 const apiKey = "b2fdb0743998319a111e3826d228b094";
 
+// How many items to story in search history
+const HISTORY_LENGTH = 10;
+
 // Select relevant elements
 const formEl = document.querySelector("form");
 const inputEl = document.querySelector("#city-text-input");
@@ -40,6 +43,9 @@ function handleSubmit(event) {
 
     // Fetch weather for coordinates and display to the page
     fetchWeather(lat, lon);
+
+    // Update history
+    updateHistory(city);
 }
 
 
@@ -160,4 +166,41 @@ function getIcon(weatherString) {
         default:
             return "❓️";
     }
+}
+
+
+// Update the search history on the page and in the storage
+function updateHistory(city) {
+    let cityList = getCityList();
+
+    if (cityList.includes(city)) {
+        // Remove the existing instance of city in the list
+        cityList.splice(cityList.indexOf(city), 1);
+        // Add a new instance of city to the beginning of the list
+        cityList.splice(0, 0, city);
+    } else {
+        // If the history is too long, remove an item
+        if (cityList.length === HISTORY_LENGTH) {
+            cityList.pop();
+        }
+        // Store city to the list
+        cityList.splice(0, 0, city);
+    }
+
+    setCityList(cityList);
+}
+
+
+// Get the search history city list from localStorage
+function getCityList() {
+    let cityList = JSON.parse(localStorage.getItem("cityList"));
+    if (!cityList) {
+        cityList = [];
+    }
+    return cityList;
+}
+
+
+function setCityList(cityList) {
+    localStorage.setItem("cityList", JSON.stringify(cityList));
 }
