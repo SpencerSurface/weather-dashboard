@@ -28,7 +28,6 @@ function handleSubmit(event) {
 
     // Get coordinates from storage
     let coordPair = getCoords(city);
-    console.log(coordPair, city)
     let lat;
     let lon;
     if (coordPair) {
@@ -44,6 +43,7 @@ function handleSubmit(event) {
 }
 
 
+// Call the geocoding API to get the coordinates for the given city, then store
 function fetchCoords(city) {
     fetch("http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + apiKey)
     .then(jsonifyResponse)
@@ -51,6 +51,7 @@ function fetchCoords(city) {
 }
 
 
+// JSONify the API response
 function jsonifyResponse(response) {
     if (response.ok) {
         return response.json();
@@ -60,6 +61,7 @@ function jsonifyResponse(response) {
 }
 
 
+// Store coordinates given in the data returned by the API
 function storeCoords(data) {
     if (data) {
         if (data.length > 0) {
@@ -73,11 +75,13 @@ function storeCoords(data) {
 }
 
 
+// Get coordinates for a given city stored in localStorage, if they exist
 function getCoords(city) {
     return JSON.parse(localStorage.getItem(city));
 }
 
 
+// Call the 5-day forecast API to get weather data for the coordinates in question
 function fetchWeather(lat, lon) {
     fetch("http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&units=imperial")
     .then(jsonifyResponse)
