@@ -3,10 +3,12 @@ const apiKey = "b2fdb0743998319a111e3826d228b094";
 
 // Select relevant elements
 const formEl = document.querySelector("form");
-const forecastRowEl = document.querySelector("#forecast-row")
+const inputEl = document.querySelector("#city-text-input");
+const forecastRowEl = document.querySelector("#forecast-row");
 
 // Initialize, set up event listeners
 formEl.addEventListener("submit", handleSubmit);
+
 
 
 // Function definitions
@@ -15,14 +17,18 @@ function handleSubmit(event) {
     event.preventDefault();
 
     // Get city name
-    // TODO: actually get it (note: API responds "400: Bad Request" if passed an empty string)
-    let city = "Beijing";
+    let city = inputEl.value;
+    if (city === "") {
+        alert("Please enter a city name.");
+        return
+    }
 
     // Perform API calls
     fetch("http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + apiKey).then(jsonifyResponse)
     .then(getCoords)
     .then(fetchWeather)
 }
+
 
 
 function jsonifyResponse(response) {
