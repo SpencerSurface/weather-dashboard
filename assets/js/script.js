@@ -23,12 +23,32 @@ function handleSubmit(event) {
         return
     }
 
-    // Perform API calls
-    fetch("http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + apiKey).then(jsonifyResponse)
-    .then(getCoords)
-    .then(fetchWeather)
+    // Fetch coordinates for city and store to localStorage
+    fetchCoords(city);
+
+    // Get coordinates from storage
+    let coordPair = getCoords(city);
+    console.log(coordPair, city)
+    let lat;
+    let lon;
+    if (coordPair) {
+        lat = coordPair[0];
+        lon = coordPair[1];
+    } else {
+        alert("Coords for that city not stored.");
+        return;
+    }
+
+    // Fetch weather for coordinates and display to the page
+    fetchWeather(lat, lon);
 }
 
+
+function fetchCoords(city) {
+    fetch("http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + apiKey)
+    .then(jsonifyResponse)
+    .then(storeCoords)
+}
 
 
 function jsonifyResponse(response) {
@@ -40,11 +60,10 @@ function jsonifyResponse(response) {
 }
 
 
-function getCoords(data) {
+function storeCoords(data) {
     if (data) {
         if (data.length > 0) {
-            lat = data[0].lat;
-            lon = data[0].lon;
+            localStorage.setItem(data[0].name, JSON.stringify([data[0].lat, data[0].lon]));
         } else {
             alert("no results found");
         }
@@ -54,16 +73,15 @@ function getCoords(data) {
 }
 
 
-function fetchWeather() {
-    fetch("http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&units=imperial").then(jsonifyResponse)
-    .then(storeWeather)
-    .then(displayWeather)
+function getCoords(city) {
+    return JSON.parse(localStorage.getItem(city));
 }
 
 
-function storeWeather(weather) {
-    localStorage.setItem(weather.city.name, JSON.stringify(weather));
-    return weather;
+function fetchWeather(lat, lon) {
+    fetch("http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&units=imperial")
+    .then(jsonifyResponse)
+    .then(displayWeather)
 }
 
 
