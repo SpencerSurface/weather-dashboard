@@ -12,6 +12,7 @@ const historyEl = document.querySelector("#history");
 
 // Set up event listeners
 formEl.addEventListener("submit", handleSubmit);
+historyEl.addEventListener("click", handleHistoryClick);
 
 // Display the search history to the page
 displayHistory();
@@ -19,6 +20,16 @@ displayHistory();
 
 
 // Function definitions
+// Handle clicks on the history buttons
+function handleHistoryClick(event) {
+    if (event.target.tagName === "BUTTON") {
+        // Fetch and render the current weather and forecast for the city in the button's textContext
+        // using the coords for the city stored in localStorage
+        fetchCurrentWeather(JSON.parse(localStorage.getItem(event.target.textContent)))
+        .then(fetchWeatherForecast);
+    }
+}
+
 // Handle the form submit event
 function handleSubmit(event) {
     event.preventDefault();
