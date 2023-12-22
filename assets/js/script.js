@@ -100,7 +100,7 @@ function displayCurrentWeather(weather) {
     // Display the current weather conditions
     document.querySelector("#current-city").textContent = weather.name;
     document.querySelector("#current-date").textContent = dayjs.unix(weather.dt).format("MM/DD/YYYY");
-    document.querySelector("#current-icon").textContent = getIcon(weather.weather[0].main);
+    document.querySelector("#current-icon").textContent = getIcon(weather.weather[0].id);
     document.querySelector("#current-temp").textContent = weather.main.temp + "°F";
     document.querySelector("#current-wind").textContent = weather.wind.speed + " mph";
     document.querySelector("#current-humidity").textContent = weather.main.humidity + "%";
@@ -147,7 +147,7 @@ function displayWeatherForecast(weather) {
         cardHeading.textContent = dayjs.unix(weather.list[i].dt).format("MM/DD/YYYY");
         let cardIcon = document.createElement("p");
         cardIcon.classList.add("card-text");
-        cardIcon.textContent = getIcon(weather.list[i].weather[0].main);
+        cardIcon.textContent = getIcon(weather.list[i].weather[0].id);
         let cardTemp = document.createElement("p");
         cardTemp.classList.add("card-text");
         cardTemp.textContent = "Temp: " + weather.list[i].main.temp + "°F";
@@ -166,17 +166,31 @@ function displayWeatherForecast(weather) {
 }
 
 
-// Map from weather conditions to emoji icons
-function getIcon(weatherString) {
-    switch (weatherString) {
-        case "Clear":
-            return "☀️";
-        case "Clouds":
-            return "☁️";
-        case "Rain":
-            return "☔️";
-        case "Snow":
+// Map from weather condition ids to emoji icons
+function getIcon(weatherId) {
+    switch ((weatherId / 100) - (weatherId / 100) % 1) {
+        // Thunderstorm
+        case 2:
+            return "⚡️";
+        // Rain
+        case 3:
+        case 5:
+            return "☔️"; 
+        // Snow
+        case 6:
             return "☃️";
+        // Atmosphere
+        case 7:
+            return "🌫️";
+        case 8:
+            // Clear skies
+            if (weatherId === 800) {
+                return "☀️";
+            // Clouds
+            } else {
+                return "☁️";
+            }
+        // Unknown (shouldn't be possible, but just in case)
         default:
             return "❓️";
     }
