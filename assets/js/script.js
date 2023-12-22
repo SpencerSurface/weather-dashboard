@@ -115,7 +115,7 @@ async function fetchCurrentWeather(coordPair) {
 function displayCurrentWeather(weather) {
     // Display the current weather conditions
     document.querySelector("#current-city").textContent = weather.name;
-    document.querySelector("#current-date").textContent = dayjs.unix(weather.dt).format("MM/DD/YYYY");
+    document.querySelector("#current-date").textContent = "(" + dayjs.unix(weather.dt).format("MM/DD/YYYY") + ")";
     document.querySelector("#current-icon").textContent = getIcon(weather.weather[0].id);
     document.querySelector("#current-temp").textContent = weather.main.temp + "°F";
     document.querySelector("#current-wind").textContent = weather.wind.speed + " mph";
