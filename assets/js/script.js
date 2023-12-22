@@ -32,7 +32,8 @@ function handleSubmit(event) {
 
     // Fetch coordinates for city and store to localStorage
     fetchCoords(city)
-    .then(fetchWeather);
+    .then(fetchCurrentWeather)
+    .then(fetchWeatherForecast);
 
     // Update history in storage
     updateHistory(city);
@@ -83,26 +84,41 @@ function getCoords(city) {
 }
 
 
+// Call the current weather API to get weather data for the coordinates in question
+async function fetchCurrentWeather(coordPair) {
+    let lat = coordPair[0];
+    let lon = coordPair[1];
+    fetch("http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&units=imperial")
+    .then(jsonifyResponse)
+    .then(displayCurrentWeather)
+    return coordPair;
+}
+
+
+// Display the current weather to the page
+function displayCurrentWeather(weather) {
+    // Display the current weather conditions
+    document.querySelector("#current-city").textContent = weather.name;
+    document.querySelector("#current-date").textContent = dayjs.unix(weather.dt).format("MM/DD/YYYY");
+    document.querySelector("#current-icon").textContent = getIcon(weather.weather[0].main);
+    document.querySelector("#current-temp").textContent = weather.main.temp + "°F";
+    document.querySelector("#current-wind").textContent = weather.wind.speed + " mph";
+    document.querySelector("#current-humidity").textContent = weather.main.humidity + "%";
+}
+
+
 // Call the 5-day forecast API to get weather data for the coordinates in question
-function fetchWeather(coordPair) {
+function fetchWeatherForecast(coordPair) {
     let lat = coordPair[0];
     let lon = coordPair[1];
     fetch("http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&units=imperial")
     .then(jsonifyResponse)
-    .then(displayWeather)
+    .then(displayWeatherForecast)
 }
 
 
-// Display the weather to the page
-function displayWeather(weather) {
-    // Display the current weather conditions
-    document.querySelector("#current-city").textContent = weather.city.name;
-    document.querySelector("#current-date").textContent = dayjs.unix(weather.list[0].dt).format("MM/DD/YYYY");
-    document.querySelector("#current-icon").textContent = getIcon(weather.list[0].weather[0].main);
-    document.querySelector("#current-temp").textContent = weather.list[0].main.temp + "°F";
-    document.querySelector("#current-wind").textContent = weather.list[0].wind.speed + " mph";
-    document.querySelector("#current-humidity").textContent = weather.list[0].main.humidity + "%";
-
+// Display the weather forecast to the page
+function displayWeatherForecast(weather) {
     // Clear the 5-day forecast area of the page except for the heading
     forecastRowEl.innerHTML = "<div class='col-12'><h3>5-Day Forecast:</h3></div>";
 
