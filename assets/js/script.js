@@ -41,16 +41,10 @@ function handleSubmit(event) {
         return
     }
 
-    // Fetch coordinates for city and store to localStorage
+    // Fetch coordinates (and update and display history), fetch and display weather and forecast
     fetchCoords(city)
     .then(fetchCurrentWeather)
     .then(fetchWeatherForecast);
-
-    // Update history in storage
-    updateHistory(city);
-
-    // Display history to the page
-    displayHistory();
 }
 
 
@@ -64,9 +58,13 @@ async function fetchCoords(city) {
         }
     })
 
-    // If a valid coordinate pair is returned, store it to localStorage
+    // If a valid coordinate pair is returned, store it to localStorage and update and display the search history
     if (coordPair) {
         storeCoords(city, coordPair);
+        updateHistory(city);
+        displayHistory();
+    } else {
+        alert("Invalid city name.");
     }
 
     return coordPair
