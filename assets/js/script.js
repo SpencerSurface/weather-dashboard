@@ -58,7 +58,16 @@ function handleSubmit(event) {
 async function fetchCoords(city) {
     let coordPair = await fetch("http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + apiKey)
     .then(jsonifyResponse)
-    .then(storeCoords)
+    .then(function (data) {
+        if (data.length > 0) {
+            return [data[0].lat, data[0].lon];
+        }
+    })
+
+    // If a valid coordinate pair is returned, store it to localStorage
+    if (coordPair) {
+        storeCoords(city, coordPair);
+    }
 
     return coordPair
 }
@@ -75,17 +84,8 @@ function jsonifyResponse(response) {
 
 
 // Store coordinates given in the data returned by the API
-function storeCoords(data) {
-    if (data) {
-        if (data.length > 0) {
-            localStorage.setItem(data[0].name, JSON.stringify([data[0].lat, data[0].lon]));
-            return [data[0].lat, data[0].lon]
-        } else {
-            alert("no results found");
-        }
-    } else {
-        alert("invalid");
-    }
+function storeCoords(city, coordPair) {
+    localStorage.setItem(city, JSON.stringify(coordPair));
 }
 
 
@@ -97,6 +97,11 @@ function getCoords(city) {
 
 // Call the current weather API to get weather data for the coordinates in question
 async function fetchCurrentWeather(coordPair) {
+    // If there's no coordinate pair, return
+    if (!coordPair) {
+        return;
+    }
+    // Else, fetch and render the current weather at those coordinates
     let lat = coordPair[0];
     let lon = coordPair[1];
     fetch("http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&units=imperial")
@@ -120,6 +125,11 @@ function displayCurrentWeather(weather) {
 
 // Call the 5-day forecast API to get weather data for the coordinates in question
 function fetchWeatherForecast(coordPair) {
+    // If there's no coordinate pair, return
+    if (!coordPair) {
+        return
+    }
+    // Else, fetch and render the weather forecast at those coordinates
     let lat = coordPair[0];
     let lon = coordPair[1];
     fetch("http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&units=imperial")
