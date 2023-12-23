@@ -50,7 +50,7 @@ function handleSubmit(event) {
 
 // Call the geocoding API to get the coordinates for the given city, then store
 async function fetchCoords(city) {
-    let coordPair = await fetch("http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + apiKey)
+    let coordPair = await fetch("https://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + apiKey)
     .then(jsonifyResponse)
     .then(function (data) {
         if (data.length > 0) {
@@ -102,7 +102,7 @@ async function fetchCurrentWeather(coordPair) {
     // Else, fetch and render the current weather at those coordinates
     let lat = coordPair[0];
     let lon = coordPair[1];
-    fetch("http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&units=imperial")
+    fetch("https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&units=imperial")
     .then(jsonifyResponse)
     .then(displayCurrentWeather)
     return coordPair;
@@ -130,7 +130,7 @@ function fetchWeatherForecast(coordPair) {
     // Else, fetch and render the weather forecast at those coordinates
     let lat = coordPair[0];
     let lon = coordPair[1];
-    fetch("http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&units=imperial")
+    fetch("https://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&units=imperial")
     .then(jsonifyResponse)
     .then(displayWeatherForecast)
 }
