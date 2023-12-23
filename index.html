@@ -17,7 +17,7 @@
     <!-- Main content -->
     <div class="row gx-3">
         <!-- Search area -->
-        <div class="col-3 container">
+        <div class="col-12 col-md-4 col-lg-3 container">
             <div class="row">
                 <!-- Search form -->
                 <form class="col-12">
@@ -37,20 +37,23 @@
             </div>
         </div>
         <!-- Weather display -->
-        <div class="col-9 container">
+        <div class="col-12 col-md-8 col-lg-9 pe-4 container">
             <!-- Current weather area -->
             <div class="row">
-                <div class="col-12 card mb-3 px-2">
-                    <div class="card-body">
-                        <h2 class="card-title"><span id="current-city">Search for a city!</span> <span id="current-date"></span> <span id="current-icon"></span></h2>
-                        <p class="card-text">Temp: <span id="current-temp"></span></p>
-                        <p class="card-text">Wind: <span id="current-wind"></span></p>
-                        <p class="card-text">Humidity: <span id="current-humidity"></span></p>
+                <div class="col px-2">
+                    <div class="card mb-3 mx-1 px-2">
+                        <div class="card-body">
+                            <h2 class="card-title"><span id="current-city">Search for a city!</span> <span id="current-date"></span> <span id="current-icon"></span></h2>
+                            <p class="card-text">Temp: <span id="current-temp"></span></p>
+                            <p class="card-text">Wind: <span id="current-wind"></span></p>
+                            <p class="card-text">Humidity: <span id="current-humidity"></span></p>
+                        </div>
                     </div>
                 </div>
             </div>
             <!-- Forecast area -->
-            <div class="row" id="forecast-row"></div>
+            <div class="row" id="forecast-row">
+            </div>
         </div>
     </div>
     

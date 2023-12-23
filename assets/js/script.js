@@ -152,9 +152,13 @@ function displayWeatherForecast(weather) {
 
     // Add the first forecast of the day for each of the next five days to the page
     for (let i = firstDayIndex; i < 40; i += 8) {
+        // Create the column
+        let forecastCol = document.createElement("div");
+        forecastCol.classList.add("col-md-6", "col-lg-4", "col-xl-3", "col-xxl", "px-2");
+
         // Create the card
         let forecastCard = document.createElement("div");
-        forecastCard.classList.add("col", "card", "me-3", "px-2");
+        forecastCard.classList.add("card", "mb-3", "mx-1", "px-2");
 
         // Create the card body
         let cardBody = document.createElement("div");
@@ -180,7 +184,8 @@ function displayWeatherForecast(weather) {
         // Append everything together
         cardBody.append(cardHeading, cardIcon, cardTemp, cardWind, cardHumidity);
         forecastCard.appendChild(cardBody);
-        forecastRowEl.appendChild(forecastCard);
+        forecastCol.appendChild(forecastCard);
+        forecastRowEl.appendChild(forecastCol);
     }
 }
 
