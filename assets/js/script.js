@@ -231,8 +231,8 @@ function updateHistory(city) {
         // Add a new instance of city to the beginning of the list
         cityList.splice(0, 0, city);
     } else {
-        // If the history is too long, remove an item
-        if (cityList.length === HISTORY_LENGTH) {
+        // If the history is too long, remove items
+        while (cityList.length >= HISTORY_LENGTH) {
             cityList.pop();
         }
         // Store city to the list
